@@ -1,0 +1,28 @@
+.mainElements_headerBoxs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-top: 40px;
+}
+
+.mainElements_headerBoxs_card {
+  background: white;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+@media screen and (max-width: 968px) {
+  .mainElements_headerBoxs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media screen and (max-width: 768px) {
+  .mainElements_headerBoxs_card {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .mainElements_headerBoxs {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}/*# sourceMappingURL=mainElement.module.css.map */

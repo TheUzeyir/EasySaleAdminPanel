@@ -1,0 +1,136 @@
+.componentsPage_container {
+  background: #F2F7FB;
+  height: 100vh;
+}
+
+.componentsPage_title {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.componentsPage_header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  position: relative;
+  margin-top: 20px;
+}
+
+.componentsPage_header_input_icon {
+  position: absolute;
+  top: 10px;
+  right: 31%;
+}
+
+.componentsPage_header_input {
+  width: 70%;
+  padding: 6px 20px;
+}
+
+.componentsPage_header_btn {
+  padding: 10px 50px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  color: blue;
+  border: 1px solid blue;
+  background: transparent;
+}
+
+.componentsPage_header_btn:hover {
+  background: blue;
+  color: white;
+  border: none;
+}
+
+.componentsPage_bottom {
+  margin-top: 40px;
+}
+
+.componentsPage_bottom_header {
+  display: flex;
+  gap: 70px;
+  justify-content: space-between;
+  align-items: center;
+  background: white;
+  padding: 20px 10px;
+  border-radius: 4px;
+}
+
+.componentsPage_bottom_main {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px 10px;
+  background: white;
+  border-radius: 4px;
+}
+
+.componentsPage_bottom_main_displayNone {
+  display: none;
+}
+
+.componentsPage_bottom_main_productTitle,
+.componentsPage_bottom_main_productParentId {
+  width: 21%;
+}
+
+.componentsPage_bottom_main_productImageBox {
+  width: 20%;
+}
+
+.componentsPage_bottom_main_productImage {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.componentsPage_bottom_header_title {
+  width: 20%;
+}
+
+.componentsPage_bottom_main_iconBox {
+  display: flex;
+  gap: 15px;
+  margin-left: 20px;
+}
+
+.componentsPage_bottom_main_iconBox_icon {
+  cursor: pointer;
+}
+
+.componentsPage_bottom_main_iconBox_icon:hover {
+  color: blue;
+}
+
+@media screen and (max-width: 968px) {
+  .componentsPage_bottom {
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .componentsPage_bottom::-webkit-scrollbar {
+    display: none;
+  }
+  .componentsPage_header_input {
+    width: 100%;
+  }
+  .componentsPage_header_input_icon {
+    right: 2%;
+  }
+  .componentsPage_header {
+    flex-direction: column;
+  }
+  .componentsPage_header_btn {
+    justify-content: center;
+  }
+}
+@media screen and (max-width: 768px) {
+  .componentsPage_bottom_header,
+  .componentsPage_bottom_main {
+    width: 768px;
+    font-size: 14px;
+  }
+}/*# sourceMappingURL=userInfo.module.css.map */

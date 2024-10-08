@@ -1,0 +1,94 @@
+.componentAdd{
+    background: white;
+    padding: 20px;
+    margin-top: 20px;
+}
+.componentAdd_title{
+    font-weight: bold;
+    font-size: 25px;
+    margin:40px 0;
+}
+
+.componentAdd_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.componentAdd_header_input{
+    width: 60%;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.componentAdd_main{
+    margin:40px 0;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    height: 300px;
+    
+}
+
+.componentAdd_main_uploadBox{
+    position: relative;
+    border: 1px dotted blue;
+    border-radius: 4px;
+    width: 60%;
+}
+
+.componentAdd_main_img{
+    width: 100%;
+    height:100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.componentAdd_main_input{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.componentAdd_bottom{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.componentAdd_bottom_btn{
+    padding:20px 60px;
+    border: none;
+    background: blue;
+    color: white;
+  border-radius: 4px;
+  margin-bottom: 40px;
+}
+
+@media screen and (max-width:768px) {
+    .componentAdd_header{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .componentAdd_header_input{
+        width: 100%;
+    }
+
+    .componentAdd_main{
+        display: flex;
+        flex-direction: column;
+    margin: 0;
+    justify-content: start;
+    }
+
+    .componentAdd_main_uploadBox{
+        margin-top: 50px;
+        height: 500px;
+        width: 100%;
+    }
+}

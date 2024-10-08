@@ -1,0 +1,94 @@
+@charset "UTF-8";
+.headerSideBar {
+  position: fixed;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  left: 0px;
+  width: 300px;
+  padding: 20px;
+  height: 100vh;
+  top: 0px;
+  z-index: 5;
+  background: white;
+  transition: transform 0.5s ease; /* Yumuşak geçiş efekti */
+  transform: translateX(0%); /* Başlangıçta gizli */
+}
+
+/* Sidebar açıldığında */
+.headerSideBar_active {
+  transform: translateX(0); /* Sidebar tamamen açıldığında */
+}
+
+.headerSideBar_logo {
+  font-size: 25px;
+  color: gray;
+}
+
+.headerSideBar_header_icon:hover {
+  cursor: pointer;
+  color: red;
+}
+
+.headerSideBar_header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.headerSideBar_title {
+  color: #BDC7D3;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.categoryBox_card_box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.categoryBox_card_box_select {
+  background: #b6c8e8;
+  color: blue;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.categoryBox_card_box_icon_select {
+  transform: rotate(180deg);
+  transition-duration: 0.5s;
+}
+
+.categoryBox_card_box {
+  cursor: pointer;
+}
+
+.categoryBox_card_box_card_icon {
+  font-size: 10px;
+  margin-right: 5px;
+}
+
+.headerSideBar_title_box {
+  display: flex;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.categoryBox_card_box_card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0 0 20px 10px;
+}
+
+.categoryBox_card_box_card_item {
+  cursor: pointer;
+}
+
+.categoryBox_card_box_card_item:hover {
+  color: blue;
+}/*# sourceMappingURL=headerSideBar.module.css.map */
