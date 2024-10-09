@@ -60,8 +60,6 @@
 
 .componentsPage_bottom_main{
     display: flex;
-    // gap: 90px;
-    // justify-content: space-between;
     align-items: center;
     margin-top: 20px;
     padding: 20px 10px;
@@ -104,6 +102,30 @@
     color: blue;
 }
 
+.componentsUpdate_container{
+    display: none;
+}
+
+.componentsUpdate{
+    background: white;
+    padding: 20px 10px;
+    margin: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 20px;
+}
+
+.componentsUpdate_input{
+    width: 100%;
+    padding: 5px 10px;
+}
+.ComponentsUpdate_btn{
+    padding: 10px 20px;
+    background: #de0606;
+    color: white;
+    width: 100%;
+}
+
 @media screen and (max-width: 968px) {
     .componentsPage_bottom {
         overflow-x: auto; 
@@ -136,5 +158,12 @@
     .componentsPage_bottom_main{
         width: 768px;
         font-size: 14px;
+    }
+    .componentsUpdate{
+        grid-template-columns: repeat(2,1fr);
+    }
+    .ComponentsUpdate_btn{
+        margin-left: 50%;
+
     }
 }
