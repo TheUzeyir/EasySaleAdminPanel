@@ -24,27 +24,27 @@ const FileUpload = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!parentId || !languageId || !categoryTitle || !selectedFile) {
       setMessage('Please fill all fields and upload a file.');
       return;
     }
-    
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64String = reader.result;
-      
       const payload = {
+        categoryId: 0, // or remove this line if not needed
         parentId: parseInt(parentId), 
         categoryImage: base64String,
         categoryTranslates: [
           {
+            categoryTranslateId: 0, // Assuming you want to set this to 0, adjust if needed
             languageId: parseInt(languageId), 
             categoryTitle: categoryTitle,
           },
         ],
       };
-  
+
       try {
         const response = await axios.post(
           'http://restartbaku-001-site4.htempurl.com/api/Category/create-category',
@@ -55,21 +55,20 @@ const FileUpload = () => {
             },
           }
         );
-  
+
         if (response.status === 200) {
           setMessage('Category created successfully!');
         } else {
           setMessage('Failed to create category.');
         }
       } catch (error) {
-        console.error('Error occurred while creating category:', error.response ? error.response.data : error.message);
-        setMessage(`An error occurred: ${error.response ? error.response.data : error.message}`);
+        console.error('Error occurred while creating category:', error);
+        setMessage(`An error occurred: ${error.message}`);
       }
     };
-  
+
     reader.readAsDataURL(selectedFile);
   };
-  
 
   return (
     <div className="componentsAdd_container">
