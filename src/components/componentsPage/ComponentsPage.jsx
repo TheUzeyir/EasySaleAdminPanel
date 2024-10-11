@@ -6,33 +6,58 @@ import axios from 'axios';
 import Header from '../header/header';
 import style from './componentsPage.module.css';
 import ComponentsUpdate from './componentsUpdate';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ComponentsPage = () => {
   const [deleteBox, setDeleteBox] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [isComponentUpdateCard, setComponentUpdateCard] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az')
-      .then(response => {
-        console.log('API Response:', response.data);
-        const { data } = response.data;
-        if (Array.isArray(data)) {
-          setDataList(data);
-        } else {
-          console.error('Unexpected data format:', data);
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az&page=1&limit=10');
+      const { data } = response.data;
+      if (Array.isArray(data)) {
+        setDataList(data);
+        setHasMore(data.length > 0); // Check if more data is available
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMoreData = async () => {
+    if (loading) return; // Prevent loading new data if a request is still in progress
+    setLoading(true);
+    try {
+      const nextPage = Math.ceil(dataList.length / 10) + 1; // Calculate next page
+      const response = await axios.get(`http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az&page=${nextPage}&limit=10`);
+      const { data } = response.data;
+      if (Array.isArray(data) && data.length > 0) {
+        setDataList((prev) => [...prev, ...data]);
+      } else {
+        setHasMore(false); // No more data available
+      }
+    } catch (error) {
+      console.error('Error loading more data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const clickTrashBox = (categoryId) => {
     axios.delete(`http://restartbaku-001-site4.htempurl.com/api/Category/delete-category/${categoryId}`)
       .then(response => {
-        console.log('Delete Response:', response.data);
         if (response.data.isSuccessful) {
           setDataList(prevDataList => prevDataList.filter(item => item.categoryId !== categoryId));
         } else {
@@ -46,17 +71,7 @@ const ComponentsPage = () => {
 
   const handleUpdateSuccess = () => {
     setComponentUpdateCard(null);
-    // Refresh the data list by re-fetching from the API
-    axios.get('http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az')
-      .then(response => {
-        const { data } = response.data;
-        if (Array.isArray(data)) {
-          setDataList(data);
-        }
-      })
-      .catch(error => {
-        console.error('Error refreshing data:', error);
-      });
+    fetchData(); // Refresh data after update
   };
 
   return (
@@ -72,6 +87,7 @@ const ComponentsPage = () => {
               <FaPlus /> Add New
             </button>
           </div>
+
           <div className={style.componentsPage_bottom}>
             <div className={style.componentsPage_bottom_header}>
               <p className={style.componentsPage_bottom_header_title}>ID</p>
@@ -80,37 +96,48 @@ const ComponentsPage = () => {
               <p className={style.componentsPage_bottom_header_title}>Image</p>
               <p className={style.componentsPage_bottom_header_title}>Action</p>
             </div>
-            {dataList.map((item) => (
-              <div key={item.categoryId} className={style.componentsPage_bottom_main_container}>
-                <div className={`${style.componentsPage_bottom_main} ${deleteBox ? style.componentsPage_bottom_main_displayNone : ""}`}>
-                  <p className={style.componentsPage_bottom_main_productTitle}>{item.categoryId}</p>
-                  <p className={style.componentsPage_bottom_main_productTitle}>{item.categoryTitle}</p>
-                  <p className={style.componentsPage_bottom_main_productParentId}>{item.parentId || 'N/A'}</p>
-                  <div className={style.componentsPage_bottom_main_productImageBox}>
-                    <img 
-                      src={item.categoryImage}
-                      alt={item.categoryTitle} 
-                      className={style.componentsPage_bottom_main_productImage}
-                    />
+
+            {/* Infinite Scroll Component */}
+            <InfiniteScroll
+              dataLength={dataList.length}
+              next={fetchMoreData}
+              hasMore={hasMore}
+              loader={<h4>Loading more categories...</h4>}
+              endMessage={<p>No more categories to load</p>}
+              scrollThreshold={0.9}
+            >
+              {dataList.map((item) => (
+                <div key={item.categoryId} className={style.componentsPage_bottom_main_container}>
+                  <div className={`${style.componentsPage_bottom_main} ${deleteBox ? style.componentsPage_bottom_main_displayNone : ""}`}>
+                    <p className={style.componentsPage_bottom_main_productTitle}>{item.categoryId}</p>
+                    <p className={style.componentsPage_bottom_main_productTitle}>{item.categoryTitle}</p>
+                    <p className={style.componentsPage_bottom_main_productParentId}>{item.parentId || 'N/A'}</p>
+                    <div className={style.componentsPage_bottom_main_productImageBox}>
+                      <img 
+                        src={item.categoryImage}
+                        alt={item.categoryTitle} 
+                        className={style.componentsPage_bottom_main_productImage}
+                      />
+                    </div>
+                    <div className={style.componentsPage_bottom_main_iconBox}>
+                      <FaPenFancy className={style.componentsPage_bottom_main_iconBox_icon} 
+                        onClick={() => setComponentUpdateCard(item)} 
+                      />
+                      <FaTrash 
+                        className={style.componentsPage_bottom_main_iconBox_icon} 
+                        onClick={() => clickTrashBox(item.categoryId)} 
+                      />
+                    </div>
                   </div>
-                  <div className={style.componentsPage_bottom_main_iconBox}>
-                    <FaPenFancy className={style.componentsPage_bottom_main_iconBox_icon} 
-                      onClick={() => setComponentUpdateCard(item)} 
+                  {isComponentUpdateCard?.categoryId === item.categoryId && (
+                    <ComponentsUpdate 
+                      item={item} 
+                      onUpdateSuccess={handleUpdateSuccess} 
                     />
-                    <FaTrash 
-                      className={style.componentsPage_bottom_main_iconBox_icon} 
-                      onClick={() => clickTrashBox(item.categoryId)} 
-                    />
-                  </div>
+                  )}
                 </div>
-                {isComponentUpdateCard?.categoryId === item.categoryId && (
-                  <ComponentsUpdate 
-                    item={item} 
-                    onUpdateSuccess={handleUpdateSuccess} 
-                  />
-                )}
-              </div>
-            ))}
+              ))}
+            </InfiniteScroll>
           </div>
         </div>
       </div>

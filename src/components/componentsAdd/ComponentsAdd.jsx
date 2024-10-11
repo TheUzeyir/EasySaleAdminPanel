@@ -33,12 +33,11 @@ const FileUpload = () => {
     reader.onloadend = async () => {
       const base64String = reader.result;
       const payload = {
-        categoryId: 0, // or remove this line if not needed
         parentId: parseInt(parentId), 
         categoryImage: base64String,
         categoryTranslates: [
           {
-            categoryTranslateId: 0, // Assuming you want to set this to 0, adjust if needed
+            categoryTranslateId: 0, 
             languageId: parseInt(languageId), 
             categoryTitle: categoryTitle,
           },
