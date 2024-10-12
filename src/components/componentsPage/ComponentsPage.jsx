@@ -16,6 +16,7 @@ const ComponentsPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
+  // API-dan məlumatları yükləyirik
   useEffect(() => {
     fetchData();
   }, []);
@@ -27,7 +28,7 @@ const ComponentsPage = () => {
       const { data } = response.data;
       if (Array.isArray(data)) {
         setDataList(data);
-        setHasMore(data.length > 0); // Check if more data is available
+        setHasMore(data.length > 0); 
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -37,16 +38,16 @@ const ComponentsPage = () => {
   };
 
   const fetchMoreData = async () => {
-    if (loading) return; // Prevent loading new data if a request is still in progress
+    if (loading) return; 
     setLoading(true);
     try {
-      const nextPage = Math.ceil(dataList.length / 10) + 1; // Calculate next page
+      const nextPage = Math.ceil(dataList.length / 10) + 1; 
       const response = await axios.get(`http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az&page=${nextPage}&limit=10`);
       const { data } = response.data;
       if (Array.isArray(data) && data.length > 0) {
         setDataList((prev) => [...prev, ...data]);
       } else {
-        setHasMore(false); // No more data available
+        setHasMore(false); // Daha çox məlumat yoxdursa, `hasMore` false edirik
       }
     } catch (error) {
       console.error('Error loading more data:', error);
@@ -55,23 +56,35 @@ const ComponentsPage = () => {
     }
   };
 
-  const clickTrashBox = (categoryId) => {
-    axios.delete(`http://restartbaku-001-site4.htempurl.com/api/Category/delete-category/${categoryId}`)
-      .then(response => {
-        if (response.data.isSuccessful) {
-          setDataList(prevDataList => prevDataList.filter(item => item.categoryId !== categoryId));
-        } else {
-          console.error('Failed to delete the category:', response.data);
-        }
-      })
-      .catch(error => {
-        console.error('Error deleting the category:', error);
-      });
+  // Məlumatı silmək üçün funksiyamız
+  const clickTrashBox = async (categoryId) => {
+    try {
+      const response = await axios.delete(`http://restartbaku-001-site4.htempurl.com/api/Category/delete-category/${categoryId}`);
+      
+      if (response.data.isSuccessful) {
+        setDataList(prevDataList => prevDataList.filter(item => item.categoryId !== categoryId));
+        alert('Category deleted successfully!');  // Uğurlu silinmə üçün xəbərdarlıq
+      } else {
+        console.error('Failed to delete the category:', response.data);
+        alert('Failed to delete category.');  // Silinmə səhvi üçün xəbərdarlıq
+      }
+    } catch (error) {
+      if (error.response) {
+        console.error('Error response from server:', error.response.data);
+        alert(`Error deleting category: ${error.response.data.message}`);  // Serverdən gələn səhv mesajını göstəririk
+      } else if (error.request) {
+        console.error('No response from server:', error.request);
+        alert('No response from server. Please try again later.');  // Server cavabı olmursa
+      } else {
+        console.error('Error setting up request:', error.message);
+        alert(`Error: ${error.message}`);  // Digər xətalar üçün
+      }
+    }
   };
 
   const handleUpdateSuccess = () => {
     setComponentUpdateCard(null);
-    fetchData(); // Refresh data after update
+    fetchData(); // Yenilənmə uğurlu olduqdan sonra məlumatı yeniləyirik
   };
 
   return (
