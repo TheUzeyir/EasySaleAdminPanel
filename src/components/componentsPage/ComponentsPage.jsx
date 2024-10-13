@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import axios from 'axios';
 import Header from '../header/header';
 import style from './componentsPage.module.css';
-import ComponentsUpdate from './componentsUpdate';
+import ComponentsUpdate from '../componentsUpdate/ComponentsUpdate';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const ComponentsPage = () => {

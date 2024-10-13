@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import style from './componentsPage.module.css';
+import style from './componentsUpdate.module.css';
 
 const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
   const [categoryTitle, setCategoryTitle] = useState(item.categoryTitle || '');
@@ -47,7 +47,7 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
           console.error('Error details:', error.response.data);
         }
       });
-  }; 
+  };
 
   return (
     <div className={`${style.componentsUpdate} ${style.componentsUpdate_container}`}>
