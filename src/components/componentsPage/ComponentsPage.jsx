@@ -16,7 +16,6 @@ const ComponentsPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  // API-dan məlumatları yükləyirik
   useEffect(() => {
     fetchData();
   }, []);
@@ -56,7 +55,6 @@ const ComponentsPage = () => {
     }
   };
 
-  // Məlumatı silmək üçün funksiyamız
   const clickTrashBox = async (categoryId) => {
     try {
       const response = await axios.delete(`http://restartbaku-001-site4.htempurl.com/api/Category/delete-category/${categoryId}`);
@@ -100,7 +98,6 @@ const ComponentsPage = () => {
               <FaPlus /> Add New
             </button>
           </div>
-
           <div className={style.componentsPage_bottom}>
             <div className={style.componentsPage_bottom_header}>
               <p className={style.componentsPage_bottom_header_title}>ID</p>
@@ -109,8 +106,6 @@ const ComponentsPage = () => {
               <p className={style.componentsPage_bottom_header_title}>Image</p>
               <p className={style.componentsPage_bottom_header_title}>Action</p>
             </div>
-
-            {/* Infinite Scroll Component */}
             <InfiniteScroll
               dataLength={dataList.length}
               next={fetchMoreData}
