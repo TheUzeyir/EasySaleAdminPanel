@@ -47,7 +47,7 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
           console.error('Error details:', error.response.data);
         }
       });
-  };
+  }; 
 
   return (
     <div className={`${style.componentsUpdate} ${style.componentsUpdate_container}`}>
