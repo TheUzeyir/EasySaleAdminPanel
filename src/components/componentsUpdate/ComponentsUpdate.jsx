@@ -10,9 +10,10 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
   const [languageId, setLanguageId] = useState(item.languageId || '');
   const [isVisible, setIsVisible] = useState(true);
 
-  // Function to hide the component immediately
-  const handleClose = () => {
-    setIsVisible(false);
+  // Function to hide the component on the first click
+  const handleClose = (e) => {
+    e.stopPropagation(); // Prevents the click from propagating to other elements
+    setIsVisible(false); // Immediately hide the component
   };
 
   const handleUpdate = () => {
@@ -63,7 +64,7 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
       {/* Backdrop */}
       <div className={style.backdrop} onClick={handleClose} />
 
-      <div className={style.componentsUpdate}>
+      <div className={style.componentsUpdate} onClick={(e) => e.stopPropagation()}>
         <p onClick={handleClose} className={style.componentsUpdate_title}>
           Update Component <IoClose className={style.componentsUpdate_title_icon} />
         </p>
