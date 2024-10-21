@@ -3,18 +3,39 @@ import axios from 'axios';
 import style from './componentsUpdate.module.css';
 import { IoClose } from "react-icons/io5";
 
-const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
+// Error boundary component to catch any errors in the update component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught in boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children; 
+  }
+}
+
+const ComponentsUpdate = ({ item, onUpdateSuccess, onClose }) => {
+  if (!item) {
+    return null; // Don't render the component if the item is undefined
+  }
+
   const [categoryTitle, setCategoryTitle] = useState(item.categoryTitle || '');
   const [parentId, setParentId] = useState(item.parentId || '');
   const [categoryImage, setCategoryImage] = useState(item.categoryImage || '');
   const [languageId, setLanguageId] = useState(item.languageId || '');
-  const [isVisible, setIsVisible] = useState(true);
-
-  // Function to hide the component on the first click
-  const handleClose = (e) => {
-    e.stopPropagation(); // Prevents the click from propagating to other elements
-    setIsVisible(false); // Immediately hide the component
-  };
 
   const handleUpdate = () => {
     if (!categoryTitle || !languageId) {
@@ -41,7 +62,7 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
     )
       .then(response => {
         if (response.data.isSuccessful) {
-          onUpdateSuccess();
+          onUpdateSuccess(); // Trigger success callback to refresh data
         } else {
           console.error('Failed to update the category:', response.data);
         }
@@ -54,17 +75,19 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
       });
   };
 
-  // Only render the component if isVisible is true
-  if (!isVisible) {
-    return null;
-  }
+  // Closes the modal when clicked
+  const handleClose = () => {
+    if (onClose) {
+      onClose(); // Trigger the onClose callback to close the modal
+    }
+  };
 
   return (
-    <>
-      {/* Backdrop */}
-      <div className={style.backdrop} onClick={handleClose} />
+    <ErrorBoundary>
+      {/* Backdrop for modal */}
+      <div className={style.backdrop} onClick={handleClose}></div>
 
-      <div className={style.componentsUpdate} onClick={(e) => e.stopPropagation()}>
+      <div className={style.componentsUpdate}>
         <p onClick={handleClose} className={style.componentsUpdate_title}>
           Update Component <IoClose className={style.componentsUpdate_title_icon} />
         </p>
@@ -102,7 +125,7 @@ const ComponentsUpdate = ({ item, onUpdateSuccess }) => {
           Save
         </button>
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 
