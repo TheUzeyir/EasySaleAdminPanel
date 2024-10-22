@@ -11,40 +11,14 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 const ComponentsPage = () => {
   const [deleteBox, setDeleteBox] = useState(false);
   const [dataList, setDataList] = useState([]);
-  const [isComponentUpdateCard, setComponentUpdateCard] = useState(null); // Track the component update state
+  const [deletedItems, setDeletedItems] = useState([]); // Deleted item IDs
+  const [isComponentUpdateCard, setComponentUpdateCard] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null); // Selected item for editing
-  const [isModalOpen, setIsModalOpen] = useState(false); // Track the modal open state
-  const [hasMore, setHasMore] = useState(true); // For InfiniteScroll
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  // Example/mock data for testing
-  const mockItem = {
-    categoryId: 1,
-    categoryTitle: 'Sample Category',
-    parentId: 0,
-    categoryImage: 'sample.jpg',
-    languageId: 1
-  };
-
-  // Handle when pencil icon is clicked
-  const handleEditClick = (item) => {
-    setSelectedItem(item); // Set the selected item for editing
-    setIsModalOpen(true); // Open the modal
-  };
-
-  // Close the modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Close the modal
-  };
-
-  // After successful update
-  const handleUpdateSuccess = () => {
-    setIsModalOpen(false); // Close the modal after update
-    // Optionally refresh data here if needed
-  };
-
-  // Fetch data on component mount
   useEffect(() => {
     fetchData();
   }, []);
@@ -55,8 +29,9 @@ const ComponentsPage = () => {
       const response = await axios.get('http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az&page=1&limit=10');
       const { data } = response.data;
       if (Array.isArray(data)) {
-        setDataList(data);
-        setHasMore(data.length > 0);
+        const filteredData = data.filter((item) => !deletedItems.includes(item.categoryId)); // Filter out deleted items
+        setDataList(filteredData);
+        setHasMore(filteredData.length > 0);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -65,7 +40,6 @@ const ComponentsPage = () => {
     }
   };
 
-  // Fetch more data when InfiniteScroll reaches threshold
   const fetchMoreData = async () => {
     if (loading) return;
     setLoading(true);
@@ -74,9 +48,10 @@ const ComponentsPage = () => {
       const response = await axios.get(`http://restartbaku-001-site3.htempurl.com/api/Category/get-all-categories?LanguageCode=az&page=${nextPage}&limit=10`);
       const { data } = response.data;
       if (Array.isArray(data) && data.length > 0) {
-        setDataList((prev) => [...prev, ...data]);
+        const filteredData = data.filter((item) => !deletedItems.includes(item.categoryId)); // Filter out deleted items
+        setDataList((prev) => [...prev, ...filteredData]);
       } else {
-        setHasMore(false); // No more data
+        setHasMore(false);
       }
     } catch (error) {
       console.error('Error loading more data:', error);
@@ -85,12 +60,12 @@ const ComponentsPage = () => {
     }
   };
 
-  // Handle category deletion
   const clickTrashBox = async (categoryId) => {
     try {
       const response = await axios.delete(`http://restartbaku-001-site4.htempurl.com/api/Category/delete-category/${categoryId}`);
       if (response.data.isSuccessful) {
         setDataList((prevDataList) => prevDataList.filter((item) => item.categoryId !== categoryId));
+        setDeletedItems((prevDeletedItems) => [...prevDeletedItems, categoryId]); // Add the deleted item to the list
         alert('Category deleted successfully!');
       } else {
         console.error('Failed to delete the category:', response.data);
