@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import style from './componentsUpdate.module.css';
 import { IoClose } from "react-icons/io5";
 
-// Error boundary component to catch any errors in the update component
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -29,62 +28,79 @@ class ErrorBoundary extends React.Component {
 
 const ComponentsUpdate = ({ item, onUpdateSuccess, onClose }) => {
   if (!item) {
-    return null; // Don't render the component if the item is undefined
+    return null;
   }
 
   const [categoryTitle, setCategoryTitle] = useState(item.categoryTitle || '');
   const [parentId, setParentId] = useState(item.parentId || '');
-  const [categoryImage, setCategoryImage] = useState(item.categoryImage || '');
+  const [categoryImage, setCategoryImage] = useState(null); // Image file
   const [languageId, setLanguageId] = useState(item.languageId || '');
+  const [isSaving, setIsSaving] = useState(false); // Track save status
+  const [error, setError] = useState(null); // Track errors
 
-  const handleUpdate = () => {
+  const handleImageChange = (e) => {
+    setCategoryImage(e.target.files[0]); // File input
+  };
+
+  const handleUpdate = async () => {
     if (!categoryTitle || !languageId) {
-      alert('Category title and Language ID are required');
+      alert('Category title and Language are required');
       return;
     }
 
-    const updatedData = {
-      categoryId: item.categoryId,
-      parentId: parentId || null,
-      categoryImage,
-      categoryTranslates: [
-        {
-          categoryTranslateId: 0,
-          languageId: parseInt(languageId, 10),
-          categoryTitle,
-        },
-      ],
-    };
+    const formData = new FormData();
+    formData.append('categoryId', item.categoryId);
+    formData.append('parentId', parentId || null);
+    
+    // Only append categoryImage if an image is selected
+    if (categoryImage) {
+      formData.append('categoryImage', categoryImage);
+    }
 
-    axios.put(
-      `http://restartbaku-001-site4.htempurl.com/api/Category/update-category/${item.categoryId}`,
-      updatedData
-    )
-      .then(response => {
-        if (response.data.isSuccessful) {
-          onUpdateSuccess(); // Trigger success callback to refresh data
-        } else {
-          console.error('Failed to update the category:', response.data);
+    formData.append('categoryTranslates[0].categoryTranslateId', 0);
+    formData.append('categoryTranslates[0].languageId', parseInt(languageId, 10));
+    formData.append('categoryTranslates[0].categoryTitle', categoryTitle);
+
+    try {
+      setIsSaving(true); // Indicate saving is in progress
+      const response = await axios.put(
+        `http://restartbaku-001-site4.htempurl.com/api/Category/update-category/${item.categoryId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         }
-      })
-      .catch(error => {
-        console.error('Error updating the category:', error);
-        if (error.response && error.response.data) {
-          console.error('Error details:', error.response.data);
-        }
-      });
+      );
+
+      if (response.data.isSuccessful) {
+        alert('Category updated successfully!');
+        onUpdateSuccess(); // Trigger callback to refresh data or close modal
+      } else {
+        console.error('Failed to update the category:', response.data);
+        setError('Failed to update the category.');
+      }
+    } catch (error) {
+      console.error('Error updating the category:', error);
+      if (error.response && error.response.data) {
+        console.error('Error details:', error.response.data);
+        setError(`Error: ${error.response.data.message || 'Unknown error occurred'}`);
+      } else {
+        setError('Error occurred while updating.');
+      }
+    } finally {
+      setIsSaving(false); // Reset saving status
+    }
   };
 
-  // Closes the modal when clicked
   const handleClose = () => {
     if (onClose) {
-      onClose(); // Trigger the onClose callback to close the modal
+      onClose();
     }
   };
 
   return (
     <ErrorBoundary>
-      {/* Backdrop for modal */}
       <div className={style.backdrop} onClick={handleClose}></div>
 
       <div className={style.componentsUpdate}>
@@ -107,23 +123,32 @@ const ComponentsUpdate = ({ item, onUpdateSuccess, onClose }) => {
           placeholder="Update Parent ID"
         />
         <input
-          name="categoryImage"
-          value={categoryImage}
-          onChange={(e) => setCategoryImage(e.target.value)}
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
           className={style.componentsUpdate_input}
-          placeholder="Update Category Image URL"
         />
-        <input
+        <select
           name="languageId"
           value={languageId}
           onChange={(e) => setLanguageId(e.target.value)}
           className={style.componentsUpdate_input}
-          placeholder="Update Language ID"
           required
-        />
-        <button className={style.componentsUpdate_btn} onClick={handleUpdate}>
-          Save
+        >
+          <option value="" disabled>Select Language</option>
+          <option value="1">Azerbaijani</option>
+          <option value="2">Russian</option>
+          <option value="3">English</option>
+        </select>
+        <button 
+          className={style.componentsUpdate_btn} 
+          onClick={handleUpdate}
+          disabled={isSaving} // Disable button while saving
+        >
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
+
+        {error && <p className={style.error}>{error}</p>}
       </div>
     </ErrorBoundary>
   );

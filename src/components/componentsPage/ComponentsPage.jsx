@@ -12,7 +12,6 @@ const ComponentsPage = () => {
   const [deleteBox, setDeleteBox] = useState(false);
   const [dataList, setDataList] = useState([]);
   const [deletedItems, setDeletedItems] = useState([]); // Deleted item IDs
-  const [isComponentUpdateCard, setComponentUpdateCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -83,6 +82,24 @@ const ComponentsPage = () => {
         alert(`Error: ${error.message}`);
       }
     }
+  };
+
+  // Function to handle edit click
+  const handleEditClick = (item) => {
+    setSelectedItem(item); // Set the clicked item as the selected item
+    setIsModalOpen(true); // Open the modal
+  };
+
+  // Function to handle closing the modal
+  const handleCloseModal = () => {
+    setSelectedItem(null); // Clear the selected item
+    setIsModalOpen(false); // Close the modal
+  };
+
+  // Function to handle update success and refresh the data list
+  const handleUpdateSuccess = () => {
+    fetchData(); // Reload data after successful update
+    handleCloseModal(); // Close the modal after update
   };
 
   return (
